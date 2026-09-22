@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>YouTube 課程快速連結</title>
+
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f5fbfa;
+    color: #263238;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+
+header {
+    background: #2f6f73;
+    color: #fff;
+    padding: 22px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(24px, 4vw, 34px);
+}
+
+main {
+    width: min(1200px, 94vw);
+    margin: 18px auto 36px;
+}
+
+.courses {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.course {
+    border: 2px solid #c9dddd;
+    background: #fff;
+    color: #24575b;
+    border-radius: 12px;
+    padding: 16px 10px;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 700;
+    min-height: 68px;
+    cursor: pointer;
+}
+
+.course.active {
+    background: #2f6f73;
+    color: #fff;
+}
+
+.area {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 14px;
+}
+
+.player {
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.player iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.side {
+    background: #fff;
+    border: 2px solid #c9dddd;
+    border-radius: 12px;
+    padding: 12px;
+    max-height: 520px;
+    overflow: auto;
+}
+
+.side h2 {
+    font-size: 20px;
+    margin: 2px 4px 12px;
+    color: #24575b;
+}
+
+.ep {
+    display: block;
+    width: 100%;
+    border: 1px solid #c9dddd;
+    background: #e9f4f3;
+    color: #263238;
+    border-radius: 8px;
+    padding: 11px 12px;
+    margin: 7px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.ep.active {
+    background: #f4c95d;
+    border-color: #d5aa36;
+    font-weight: 700;
+}
+
+.full {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding: 11px;
+    background: #2f6f73;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+@media (max-width: 850px) {
+    .courses {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .area {
+        grid-template-columns: 1fr;
+    }
+
+    .side {
+        max-height: none;
+    }
+}
+
+@media (max-width: 520px) {
+    main {
+        width: 96vw;
+    }
+
+    .courses {
+        grid-template-columns: 1fr;
+    }
+
+    .course {
+        min-height: 58px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>YouTube 課程快速連結</h1>
+    </header>
+
+    <main>
+
+        <!-- 課程按鈕 -->
+        <section id="courses" class="courses"></section>
+
+        <!-- YouTube 播放器 + 單集清單 -->
+        <section class="area">
+
+            <div class="player">
+                <iframe
+                    id="yt"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            </div>
+
+            <aside class="side">
+
+                <h2 id="title"></h2>
+
+                <div id="episodes"></div>
+
+                <a
+                    id="full"
+                    class="full"
+                    target="_blank"
+                    rel="noopener">
+                    開啟完整播放清單
+                </a>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    <script>
+
+        /*
+         * ============================================================
+         * 課程資料
+         * ============================================================
+         *
+         * title    = 課程名稱
+         * playlist = YouTube 播放清單 ID
+         * videos   = 每一集影片的 Video ID
+         *
+         * 之後如果要新增、刪除或更換課程／影片，
+         * 主要就是修改下面這一區。
+         *
+         * YouTube 播放清單連結：
+         * https://www.youtube.com/playlist?list=播放清單ID
+         *
+         * YouTube 單集影片連結：
+         * https://www.youtube.com/watch?v=Video ID
+         * ============================================================
+         */
+
+const data = [
+    {
+        title: "經濟學（上）（商專）",
+        playlist: "PLRxFAJ4W6VgVM1rQqkKrxqLLFK8rMSX0g",
+        videos: [
+            "154PdjTIDyw", // 第1講
+            "ojHdTHAPeks", // 第2講
+            "CYnKuBi5ZEk", // 第3講
+            "uorcUetu3Ic", // 第4講
+            "K6esHgX72DQ", // 第5講
+            "boGjmM-hoWU", // 第6講
+            "MIG65fkzwls", // 第7講
+            "9RklcdNS4Z8", // 第8講
+            "sePLR_0zmaA", // 第9講
+            "ZkITz6B0aYM", // 第10講
+            "rrZG5Q2-70I", // 第11講
+            "WiD0wHddCpM", // 第12講
+            "0lb8q_ojntg", // 第13講
+            "FOqPiDkNUtU", // 第14講
+            "SP_QoLYuhcs", // 第15講
+            "s7gLt2F-yuc", // 第16講
+            "2Vrodrh5C1E", // 第17講
+            "6o68UrkwOi0" // 第18講
+        ]
+    },
+    {
+        title: "商務談判（商專）",
+        playlist: "PLRxFAJ4W6VgX1NsM75CLeI9gjt2Up_JZ4",
+        videos: [
+            "gsjc8aUnWnA", // 第1講
+            "I6hPHo7LoEE", // 第2講
+            "eRaNs69DhNE", // 第3講
+            "54Is9uI1kWE", // 第4講
+            "d4Mz7AhoTHY", // 第5講
+            "ml86YdMDjDc", // 第6講
+            "VR12pUtbzuU", // 第7講
+            "sZaoyj6jwj8", // 第8講
+            "CgAI2u9ZUvA", // 第9講
+            "LY5HLUcxttE", // 第10講
+            "SK3N7502UKs", // 第11講
+            "vDY6TIeQ4bE", // 第12講
+            "mrjI6K9QFww", // 第13講
+            "fvjbWNikLvA", // 第14講
+            "f6HhvsVcykk", // 第15講
+            "4vajvRFxkRA", // 第16講
+            "gsZyB4luK4U", // 第17講
+            "Xwtg0H3Bddw" // 第18講
+        ]
+    },
+    {
+        title: "商用英文（一）（商專）",
+        playlist: "PLRxFAJ4W6VgX1AAEIO2EHxOGKCRumycVz",
+        videos: [
+            "DepKG3hql2o", // 第1講
+            "4O6pnorA0HE", // 第2講
+            "WAsB1XrMga8", // 第3講
+            "9wG74Y9s1Zg", // 第4講
+            "R5r-hvLRsM8", // 第5講
+            "ktPpISclZWg", // 第6講
+            "3Djaw_YZJqM", // 第7講
+            "Gtzj_VRfQe8", // 第8講
+            "YFUFB08hNb8", // 第9講
+            "2kXY7KSegjM", // 第10講
+            "en47N_p8lBI", // 第11講
+            "d0lK3pMHsGI", // 第12講
+            "Wbl55Y-iMa4", // 第13講
+            "iQytza7jOUg", // 第14講
+            "8Jzi5NSLNIU", // 第15講
+            "DtNV_2UwnlM", // 第16講
+            "6SJejPOBnfU", // 第17講
+            "Ogsq9vQrJtw" // 第18講
+        ]
+    },
+    {
+        title: "貨幣銀行學（上）（商專）",
+        playlist: "PLRxFAJ4W6VgXR-ctZLh5i78LqwzQ4k5hI",
+        videos: [
+            "EJGhh-yLCBU", // 第1講
+            "KUebHgmZ8zw", // 第2講
+            "vCqW6db7tRo", // 第3講
+            "WoZV9IkUfQ0", // 第4講
+            "iukmt-uxIz0", // 第5講
+            "QUPlDFFchBw", // 第6講
+            "SSCuQ-VEvbY", // 第7講
+            "cXtJsHO8fY0", // 第8講
+            "E3P53FnUc1I", // 第9講
+            "G7kAe_o0Ptc", // 第10講
+            "TNt1Xm6AvGQ", // 第11講
+            "LIhVDDzj8LI", // 第12講
+            "N_YU5NlzA8g", // 第13講
+            "1ApI43hibGk", // 第14講
+            "IKp761T_Ylo", // 第15講
+            "NpxGtE9IOFo", // 第16講
+            "rcQQ5Js1uVY", // 第17講
+            "wlFmgRlTlCw" // 第18講
+        ]
+    },
+    {
+        title: "英文檢定（一）（商專）",
+        playlist: "PLRxFAJ4W6VgVVs_0Nr-XLhh2RBKf15Elp",
+        videos: [
+            "E18jBIVJrIg", // 第1講
+            "rH97t9thn7E", // 第2講
+            "Cj0vLuKqyXc", // 第3講
+            "oBSJkY3Yyd8", // 第4講
+            "t8vK-eIzhZU", // 第5講
+            "GirvVPm6e_w", // 第6講
+            "AaVEM2FTwaw", // 第7講
+            "bNgWzFSRWRY", // 第8講
+            "9FNssDGLjgg", // 第9講
+            "e0t4rTfk2I0", // 第10講
+            "ifQy16YahE8", // 第11講
+            "mh9xDSwbBhY", // 第12講
+            "v-b6zmFSRK8", // 第13講
+            "1mBW0N1DMTM", // 第14講
+            "9bfuXbyPd5Q", // 第15講
+            "gXFSBwyMqL0", // 第16講
+            "nvOyhGkp6Ww", // 第17講
+            "Oj2dw70VPDA" // 第18講
+        ]
+    },
+    {
+        title: "商用英語會話（上）（商專）",
+        playlist: "PLRxFAJ4W6VgVH_5Ukx93oWv6kQS6mDdgd",
+        videos: [
+            "ACiw1EAyKy0", // 第1講
+            "vCxWu4GZDXQ", // 第2講
+            "wDi9qD_YrvE", // 第3講
+            "KI4RhoKK9H0", // 第4講
+            "ZKyM6f83o_M", // 第5講
+            "XuMR1wjy254", // 第6講
+            "_iWNyTG-Os0", // 第7講
+            "bAXTw-joO_4", // 第8講
+            "W18LrtMRUw", // 第9講
+            "modIRUCC4JI", // 第10講
+            "Hfo7DPtwk14", // 第11講
+            "dqgYo-FRYe8", // 第12講
+            "cJfUIa_RPYk", // 第13講
+            "JMZ4gtNG1Pc", // 第14講
+            "isM7fsTFabM", // 第15講
+            "JCMnICiHsRA", // 第16講
+            "gTetsp7mLVg", // 第17講
+            "RLGazentWRg" // 第18講
+        ]
+    },
+    {
+        title: "英文翻譯（一）（商專）",
+        playlist: "PLRxFAJ4W6VgX5eqUzmki1Vozhz5Bj-iiW",
+        videos: [
+            "783LKFGx6CQ", // 第1講
+            "DbRHg3EmSS4", // 第2講
+            "LQmJeGLAeFc", // 第3講
+            "R2yPUkJVKt0", // 第4講
+            "N_QavnJrbMw", // 第5講
+            "9F3m4E-Li0Q", // 第6講
+            "nrsC_q2H4jo", // 第7講
+            "UQ7O2jKSVFo", // 第8講
+            "AMG05NbnsjY", // 第9講
+            "ox8LQhHmkoY", // 第10講
+            "clc6hNZcT4A", // 第11講
+            "mjzHHR3e6gQ", // 第12講
+            "5cHBi41kdUg", // 第13講
+            "hIsYjEEqML8", // 第14講
+            "AT72_fJohj4", // 第15講
+            "VVWNo6VbKOg", // 第16講
+            "TDigIBOZvY4", // 第17講
+            "fVHqEBlgc1s" // 第18講
+        ]
+    },
+    {
+        title: "英文作文（一）（商專）",
+        playlist: "PLRxFAJ4W6VgW-vTORcHPfhkeTBAMybr6j",
+        videos: [
+            "2w3epPayggk", // 第1講
+            "3W3FN5FsrlU", // 第2講
+            "Cx_KCrbvfUg", // 第3講
+            "hhrLyTTXEPc", // 第4講
+            "z7z7gp0pknY", // 第5講
+            "8API5uiGQEY", // 第6講
+            "hqBrpvIAQT8", // 第7講
+            "0XUI_erjeY8", // 第8講
+            "Q4WhCiJ_-Q4", // 第9講
+            "bWqieEhKrDg", // 第10講
+            "yOV_xWzF7pI", // 第11講
+            "QAcezCAXPpY", // 第12講
+            "DMERMw3Tp7U", // 第13講
+            "DbbC7vsfOlk", // 第14講
+            "gPuBGm3xlZ8", // 第15講
+            "EEyfLWJQNQg", // 第16講
+            "wvUrsKrhCnE", // 第17講
+            "Ymb9Bv2Rf4g" // 第18講
+        ]
+    },
+    {
+        title: "醫學與保健（商專）",
+        playlist: "PLRxFAJ4W6VgXjy9S4XeQNRHoiqDyn2lGH",
+        videos: [
+            "rvZTtiYO88c", // 第1講
+            "CQRitJQKFis", // 第2講
+            "LU9Lvf6ONYc", // 第3講
+            "F0bSe_ZVY-c", // 第4講
+            "aNLW9F9GLV4", // 第5講
+            "pZoKLfD40kk", // 第6講
+            "SEnMdF6J9jg", // 第7講
+            "ZqNWWtXkb54", // 第8講
+            "oKq97cCJvsQ", // 第9講
+            "fuXIyZn_s2s", // 第10講
+            "KbEXKs8yl68", // 第11講
+            "k5yEablc-dA", // 第12講
+            "bP3padGDgss", // 第13講
+            "zt6AmzVcRAY", // 第14講
+            "imL4irff2ik", // 第15講
+            "9T1KTiiYGzo", // 第16講
+            "BHLyCP0BndU", // 第17講
+            "PkM6AbMaksI" // 第18講
+        ]
+    }
+];
+
+        /*
+         * ============================================================
+         * 以下為網頁功能程式
+         * ============================================================
+         */
+
+let ci = 0;
+let vi = 0;
+
+const cs = document.querySelector("#courses");
+const es = document.querySelector("#episodes");
+const title = document.querySelector("#title");
+const yt = document.querySelector("#yt");
+const full = document.querySelector("#full");
+
+function load(i, v = 0) {
+    ci = i;
+    vi = v;
+
+    document.querySelectorAll(".course").forEach((x, n) => {
+        x.classList.toggle("active", n === i);
+    });
+
+    const c = data[i];
+
+    title.textContent = c.title;
+    full.href = "https://www.youtube.com/playlist?list=" + c.playlist;
+
+    yt.src =
+        "https://www.youtube.com/embed/" +
+        c.videos[v] +
+        "?rel=0&origin=" +
+        encodeURIComponent(location.origin);
+
+    es.innerHTML = "";
+
+    c.videos.forEach((id, n) => {
+        const b = document.createElement("button");
+
+        b.className = "ep" + (n === v ? " active" : "");
+        b.textContent = "第" + (n + 1) + "講";
+        b.onclick = () => load(i, n);
+
+        es.appendChild(b);
+    });
+}
+
+data.forEach((c, i) => {
+    const b = document.createElement("button");
+
+    b.className = "course";
+    b.textContent = c.title;
+    b.onclick = () => load(i);
+
+    cs.appendChild(b);
+});
+
+load(0);
+
+    </script>
+
+</body>
+
+</html>
