@@ -455,20 +455,16 @@ function load(i, v = 0) {
     es.innerHTML = "";
 
     c.videos.forEach((id, n) => {
-    const b = document.createElement("button");
+        const b = document.createElement("button");
 
-    b.className = "ep" + (n === v ? " active" : "");
-    b.textContent = "第" + (n + 1) + "講";
-
-    if (id) {
+        b.className = "ep" + (n === v ? " active" : "");
+        b.textContent = "第" + (n + 1) + "講";
         b.onclick = () => load(i, n);
-    } else {
-        b.disabled = true;
-    }
 
-    es.appendChild(b);
-});
-    
+        es.appendChild(b);
+    });
+}
+
 data.forEach((c, i) => {
     const b = document.createElement("button");
 
