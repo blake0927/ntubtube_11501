@@ -273,26 +273,26 @@ const data = [
     },
     {
         title: "國際貿易英文（商專）",
-        playlist: "PLRxFAJ4W6VgX1AAEIO2EHxOGKCRumycVz",
+        playlist: "PLRxFAJ4W6VgVtSqADofpWE7YWdwl6BZbe",
         videos: [
-            "DepKG3hql2o", // 第1講
-            "4O6pnorA0HE", // 第2講
-            "WAsB1XrMga8", // 第3講
-            "9wG74Y9s1Zg", // 第4講
-            "R5r-hvLRsM8", // 第5講
-            "ktPpISclZWg", // 第6講
-            "3Djaw_YZJqM", // 第7講
-            "Gtzj_VRfQe8", // 第8講
-            "YFUFB08hNb8", // 第9講
-            "2kXY7KSegjM", // 第10講
-            "en47N_p8lBI", // 第11講
-            "d0lK3pMHsGI", // 第12講
-            "Wbl55Y-iMa4", // 第13講
-            "iQytza7jOUg", // 第14講
-            "8Jzi5NSLNIU", // 第15講
-            "DtNV_2UwnlM", // 第16講
-            "6SJejPOBnfU", // 第17講
-            "Ogsq9vQrJtw" // 第18講
+            "46-yTTPIPhc", // 第1講
+            "mpRfxl7Ghzg", // 第2講
+            "3XR7TwFGog4", // 第3講
+            "JKCfS0A0Kgk", // 第4講
+            "yTKjpdGA4io", // 第5講
+            "khdMRkS3E7o", // 第6講
+            "HEXlCZ7SQjg", // 第7講
+            "Iz_ig7iA9ZM", // 第8講
+            "gN3AZII0RKU", // 第9講
+            "Wb4qe-SkNaw", // 第10講
+            "xwk_wT_O6As", // 第11講
+            "ZTn1rg6n5b8", // 第12講
+            "11mca221jbg", // 第13講
+            "MJwUEdpNgbg", // 第14講
+            "MJwUEdpNgbg", // 第15講
+            "Gle3zDE37iU", // 第16講
+            "PyiHgZSfMQA", // 第17講
+            "CEEI8EZalvI" // 第18講
         ]
     },
     {
@@ -459,12 +459,7 @@ function load(i, v = 0) {
 
         b.className = "ep" + (n === v ? " active" : "");
         b.textContent = "第" + (n + 1) + "講";
-       
-	   if (id) {
         b.onclick = () => load(i, n);
-    } else {
-        b.disabled = true;
-    }
 
         es.appendChild(b);
     });
