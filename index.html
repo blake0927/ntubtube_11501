@@ -459,7 +459,12 @@ function load(i, v = 0) {
 
         b.className = "ep" + (n === v ? " active" : "");
         b.textContent = "第" + (n + 1) + "講";
+       
+	   if (id) {
         b.onclick = () => load(i, n);
+    } else {
+        b.disabled = true;
+    }
 
         es.appendChild(b);
     });
